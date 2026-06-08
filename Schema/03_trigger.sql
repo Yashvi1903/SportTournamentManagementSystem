@@ -17,8 +17,9 @@
 
 
 -- ============================================================
--- TRIGGER 1: Prevent a Player from being their own Captain
---            before insert or update on Team
+-- TRIGGER 1: The trigger checks that whenever a team's captain_id
+--  is inserted or updated, the captain is already listed as a member
+--  of that same team in the PlayerTeam table; otherwise, it raises an error.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION fn_check_captain_is_team_member()
@@ -412,6 +413,4 @@ CREATE TRIGGER trg_pass_tournament_active
     EXECUTE FUNCTION fn_check_pass_tournament_active();
 
 
--- ============================================================
--- END OF TRIGGERS
 -- ============================================================

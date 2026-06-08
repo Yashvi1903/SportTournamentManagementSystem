@@ -143,7 +143,6 @@ CREATE TABLE SportType (
 
 -- ============================================================
 -- 3. Rules — weak entity under Sports
---    Composite PK (sport_id, rule_no): rule numbers restart per sport
 -- ============================================================
 
 CREATE TABLE Rules (
@@ -239,8 +238,6 @@ CREATE TABLE Match (
 -- ────────────────────────────────────────────────────────────
 
 -- Result depends on Match, Team, Player
--- Exactly one of winner_team_id / winner_player_id must be filled
--- based on winner_type — enforced via CHECK constraint
 CREATE TABLE Result (
     result_id        VARCHAR(10)  PRIMARY KEY,
     match_id         VARCHAR(10)  NOT NULL UNIQUE,
@@ -262,16 +259,7 @@ CREATE TABLE Result (
     CONSTRAINT fk_result_winner_player
         FOREIGN KEY (winner_player_id) REFERENCES Player(player_id)
         ON DELETE SET NULL
-        ON UPDATE CASCADE,
-    CONSTRAINT chk_winner_consistency CHECK (
-        (LOWER(winner_type) = 'team'
-            AND winner_team_id   IS NOT NULL
-            AND winner_player_id IS NULL)
-        OR
-        (LOWER(winner_type) = 'individual'
-            AND winner_player_id IS NOT NULL
-            AND winner_team_id   IS NULL)
-    )
+        ON UPDATE CASCADE
 );
 
 
@@ -279,7 +267,7 @@ CREATE TABLE Result (
 -- 6. BRIDGE / RELATIONSHIP TABLES
 -- ============================================================
 
--- Organizer - Tournament  (M:N — organizes_tournament)
+
 CREATE TABLE OrganizeTournament (
     member_id     VARCHAR(10) NOT NULL,
     tournament_id VARCHAR(10) NOT NULL,
@@ -305,7 +293,7 @@ CREATE TABLE OrganizeTournament (
 
 -- ────────────────────────────────────────────────────────────
 
--- Person - Tournament  (M:N — has tournament pass)
+-- Person - Tournament  
 CREATE TABLE PersonPass (
     person_id         VARCHAR(10) NOT NULL,
     tournament_id     VARCHAR(10) NOT NULL,
@@ -381,7 +369,6 @@ CREATE TABLE SportEquipments (
 -- ────────────────────────────────────────────────────────────
 
 -- Player - Sports  (M:N — played_by)
--- level and experience_years are relationship attributes
 CREATE TABLE PlayerSport (
     player_id        VARCHAR(10) NOT NULL,
     sport_id         VARCHAR(10) NOT NULL,
@@ -422,7 +409,7 @@ CREATE TABLE PlayerPlaysMatch (
 -- ────────────────────────────────────────────────────────────
 
 -- Player - Team  (M:N — contains)
--- join_date and end_date are relationship attributes
+
 CREATE TABLE PlayerTeam (
     player_id VARCHAR(10) NOT NULL,
     team_id   VARCHAR(10) NOT NULL,
@@ -444,7 +431,6 @@ CREATE TABLE PlayerTeam (
 -- ────────────────────────────────────────────────────────────
 
 -- Team - Coach  (M:N — Trains)
--- join_date and end_date are relationship attributes
 CREATE TABLE TeamCoach (
     team_id   VARCHAR(10) NOT NULL,
     coach_id  VARCHAR(10) NOT NULL,
@@ -485,10 +471,6 @@ CREATE TABLE TeamPlaysMatch (
 -- ────────────────────────────────────────────────────────────
 
 -- PlayerStatistics — weak entity (records relationship)
--- Composite PK: (player_id, match_id)
--- status_type = 'numeric' → status_value must be filled
--- status_type = 'outcome' → status_value must be NULL,
---                            status_name stores 'win'/'lose'/'draw'
 CREATE TABLE PlayerStatistics (
     player_id    VARCHAR(10) NOT NULL,
     match_id     VARCHAR(10) NOT NULL,
@@ -518,8 +500,6 @@ CREATE TABLE PlayerStatistics (
 -- ────────────────────────────────────────────────────────────
 
 -- TeamStatistics — weak entity (has relationship)
--- Composite PK: (team_id, match_id)
--- Same logic as PlayerStatistics
 CREATE TABLE TeamStatistics (
     team_id      VARCHAR(10) NOT NULL,
     match_id     VARCHAR(10) NOT NULL,
@@ -546,7 +526,4 @@ CREATE TABLE TeamStatistics (
         ON UPDATE CASCADE
 );
 
-
--- ============================================================
--- END OF DDL
 -- ============================================================
