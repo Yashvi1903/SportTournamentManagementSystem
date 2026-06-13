@@ -6,21 +6,6 @@
 
 *Built for events like Concours (DA-IICT) · Udghosh (IIT Kanpur) · Riviera (VIT) · Shaurya (IIT KGP)*
 
-<br>
-
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Status](https://img.shields.io/badge/Status-Active-27AE60?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)]()
-
-<br>
-
-![Tables](https://img.shields.io/badge/Tables-27-4A90D9?style=flat-square)
-![Constraints](https://img.shields.io/badge/CHECK%20Constraints-38-27AE60?style=flat-square)
-![Foreign Keys](https://img.shields.io/badge/Foreign%20Keys-36-E67E22?style=flat-square)
-![Indexes](https://img.shields.io/badge/Indexes-49-8E44AD?style=flat-square)
-![Triggers](https://img.shields.io/badge/Triggers-13-E74C3C?style=flat-square)
-![Views](https://img.shields.io/badge/Views-8-16A085?style=flat-square)
-![Procedures](https://img.shields.io/badge/Procedures-5-2980B9?style=flat-square)
 
 </div>
 
