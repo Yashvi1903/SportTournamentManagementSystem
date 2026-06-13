@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🏆 Concours — Sports Tournament Management System
+# Sports Tournament Management System
 
-### A production-grade PostgreSQL database for college sports fests
+### A PostgreSQL database for sports fests
 
 *Built for events like Concours (DA-IICT) · Udghosh (IIT Kanpur) · Riviera (VIT) · Shaurya (IIT KGP)*
 
@@ -42,9 +42,9 @@ College sports fests run on paper forms, WhatsApp groups, and Excel sheets.
 
 ## ER Diagram
 
-![ER Diagram](docs/ER_Model.png)
+![ER Diagram](ER_Model.png)
 
-> Full design rationale → [`docs/design_decisions.md`](docs/design_decisions.md)
+> Full design rationale → [`design_decisions.md`](design_decisions.md)
 
 ---
 
@@ -122,19 +122,19 @@ College sports fests run on paper forms, WhatsApp groups, and Excel sheets.
 
 ## Key Design Decisions
 
-### 1 — Overlapping ISA Hierarchy
+### 1 Overlapping ISA Hierarchy
 `Person` is the superclass. `Player` and `Spectator` are subclasses marked **overlapping** — a cricket player can watch a football match without any special registration. The `PersonViewMatch` relationship connects to `Person`, not `Spectator`, because viewing is a behaviour any person can exhibit — not a role-specific action.
 
-### 2 — Sport-Agnostic Statistics Model
+### 2 Sport-Agnostic Statistics Model
 Every stat is stored as a named row `(status_name, status_value)` — not as hardcoded columns. Goals, wickets, rebounds, KDA ratio — any statistic for any sport fits the same schema. **Adding a new sport requires zero DDL changes.**
 
-### 3 — Temporal Relationship Tracking
+### 3 Temporal Relationship Tracking
 `PlayerTeam` and `TeamCoach` carry `join_date` and `end_date`. The database answers historical questions: *"Who was on the cricket team in the 2022 tournament?"* — not just current membership but the full career history. `end_date IS NULL` means currently active.
 
-### 4 — Result Supports Both Sport Types
+### 4 Result Supports Both Sport Types
 `Result.winner_type` discriminates between `'team'` and `'individual'` sports with a cross-column CHECK constraint — you cannot record a team winner for a badminton singles final. The constraint `chk_winner_consistency` enforces mutual exclusivity at the database level.
 
-### 5 — Deliberate CASCADE Rules Per FK
+### 5 Deliberate CASCADE Rules Per FK
 Every FK has an intentional `ON DELETE` action based on one question: *does the child row have meaning without the parent?*
 - Deleting a `Tournament` → **CASCADE** to matches, passes, results (all meaningless without the tournament)
 - Deleting a `Referee` → **SET NULL** on `Match.referee_id` (the match still happened)
@@ -189,54 +189,7 @@ Every FK has an intentional `ON DELETE` action based on one question: *does the 
 
 ---
 
-## Sample Query — Match Result Report
 
-```sql
--- Query 11: Resolves winner name from Team or Person table
--- depending on whether the sport is team-based or individual
-SELECT
-    m.match_id,
-    s.sport_name,
-    t.tournament_name,
-    m.match_type,
-    r.winner_type,
-    CASE
-        WHEN LOWER(r.winner_type) = 'team'
-            THEN COALESCE(t_win.team_name,   'Draw')
-        WHEN LOWER(r.winner_type) = 'individual'
-            THEN COALESCE(p_win.person_name, 'Draw')
-    END AS winner_name,
-    COALESCE(r.score_detail, 'N/A') AS score,
-    r.outcome
-FROM Result r
-JOIN Match      m     ON r.match_id         = m.match_id
-JOIN Sports     s     ON m.sport_id         = s.sport_id
-JOIN Tournament t     ON m.tournament_id    = t.tournament_id
-LEFT JOIN Team  t_win ON r.winner_team_id   = t_win.team_id
-LEFT JOIN Person p_win ON r.winner_player_id = p_win.person_id
-ORDER BY m.date;
-```
-
-> Full query library with Easy / Intermediate / Advanced categories → [`queries/01_queries.sql`](queries/01_queries.sql)
-
----
-
-## Seed Data Included
-
-| Entity | Rows |
-|---|---|
-| Persons | 30 (P001–P030) |
-| Players | 25 (P001–P025) |
-| Tournaments | 6 (T001–T006) — 2024 and 2025 editions |
-| Sports | 8 — Cricket, Football, Basketball, Tennis, Badminton, Athletics, Table Tennis, Volleyball |
-| Teams | 12 — 3 teams per team sport |
-| Matches | 24 — group, quarterfinal, semifinal, and final stages |
-| Coaches | 10 |
-| Referees | 8 |
-| Venues | 8 |
-| Sponsors | 8 companies |
-
----
 
 ## Quick Start
 
@@ -266,34 +219,7 @@ psql -U postgres -d SportTournamentDB -f queries/01_queries.sql
 
 ---
 
-## Repository Structure
 
-```
-sports-tournament-db/
-│
-├── docs/
-│   ├── ER_Model.png                  ← ER diagram
-│   └── design_decisions.md           ← Full system design document
-│
-├── schema/
-│   ├── 01_tables.sql                 ← 27 tables with all constraints
-│   ├── 02_indexes.sql                ← 49 indexes with documented reasoning
-│   ├── 03_trigger.sql                ← 13 business rule triggers
-│   ├── 04_views.sql                  ← 8 views
-│   └── 05_procedures.sql             ← 5 stored procedures
-│
-├── seed/
-│   ├── 01_coreentity.sql             ← Core entities (persons, sports, venues...)
-│   ├── 02_dependent_entities.sql     ← Players, teams, matches
-│   └── 03_relation_entity.sql        ← All junction table data
-│
-├── queries/
-│   └── 01_queries.sql                ← 15 queries (Easy / Intermediate / Advanced)
-│
-└── README.md
-```
-
----
 
 ## Tech Stack
 
@@ -302,20 +228,12 @@ sports-tournament-db/
 | PostgreSQL 16 | Primary database engine |
 | pgAdmin 4 | Schema design and query execution |
 | draw.io | ER diagram |
-| VS Code | SQL authoring |
 
 ---
 
 <div align="center">
 
-**Group D3 — DA-IICT, Semester 4**
 
-| Name | Student ID |
-|---|---|
-| Yashvi Patel | 202403035 |
-| Saloni Vaghela | 202403048 |
-
-<br>
 
 <sub>Designed as part of the DBMS course at DA-IICT · 2025–26</sub>
 
