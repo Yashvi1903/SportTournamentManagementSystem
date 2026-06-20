@@ -81,8 +81,9 @@ CREATE TABLE Sponsors (
 -- ────────────────────────────────────────────────────────────
 
 CREATE TABLE Sports (
-    sport_id   VARCHAR(10)  PRIMARY KEY,
-    sport_name VARCHAR(100) NOT NULL UNIQUE
+    sport_id      VARCHAR(10)  PRIMARY KEY,
+    sport_name    VARCHAR(100) NOT NULL UNIQUE,
+    max_team_size INT NOT NULL CHECK (max_team_size >= 1)
 );
 
 -- ────────────────────────────────────────────────────────────

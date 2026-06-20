@@ -388,17 +388,16 @@ CREATE TRIGGER trg_default_registration_date
 -- TRIGGER 13: Prevent a Player from registering a PersonPass
 --             for a tournament that has already ended
 -- ============================================================
-
 CREATE OR REPLACE FUNCTION fn_check_pass_tournament_active()
 RETURNS TRIGGER AS $$
 DECLARE
     v_end_date DATE;
 BEGIN
     SELECT end_date INTO v_end_date
-    FROM Tournament
+    FROM tournament
     WHERE tournament_id = NEW.tournament_id;
 
-    IF CURRENT_DATE > v_end_date THEN
+    IF NEW.registration_date > v_end_date THEN
         RAISE EXCEPTION
             'Cannot register pass for tournament (tournament_id = %) that has already ended on %',
             NEW.tournament_id, v_end_date;
@@ -407,10 +406,45 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_pass_tournament_active
-    BEFORE INSERT ON PersonPass
+
+
+-- ================================================================
+-- TRIGGER 14: PREVERNT TEAM TO EXCEED THE TEAM SIZE AND PLAYER TO MAKE A TEAM OF INDIVIDUAL SPORTS
+-- ================================================================
+CREATE OR REPLACE FUNCTION fn_check_team_size_limit()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_max_size      INT;
+    v_current_count INT;
+BEGIN
+    SELECT s.max_team_size INTO v_max_size
+    FROM Team t
+    JOIN Sports s ON t.sport_id = s.sport_id
+    WHERE t.team_id = NEW.team_id;
+
+    
+    IF v_max_size = 1 THEN
+        RAISE EXCEPTION
+            'This is an individual sport. Players cannot join a team.';
+    END IF;
+
+    SELECT COUNT(*) INTO v_current_count
+    FROM PlayerTeam
+    WHERE team_id = NEW.team_id
+      AND end_date IS NULL;
+
+    IF v_current_count >= v_max_size THEN
+        RAISE EXCEPTION
+            'Team (team_id = %) has reached the maximum size of % players.',
+            NEW.team_id, v_max_size;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_team_size_limit
+    BEFORE INSERT ON PlayerTeam
     FOR EACH ROW
-    EXECUTE FUNCTION fn_check_pass_tournament_active();
-
-
+    EXECUTE FUNCTION fn_check_team_size_limit();
 -- ============================================================

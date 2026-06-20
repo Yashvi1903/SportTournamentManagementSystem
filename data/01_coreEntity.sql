@@ -75,13 +75,12 @@ INSERT INTO Organizer (member_id, member_name, email_id, contact_no) VALUES
 --                 start_date, end_date)
 -- ============================================================================
 INSERT INTO Tournament (tournament_id, tournament_name, tournament_year, season, start_date, end_date) VALUES
-('T001', 'Inter-College Cricket Championship 2024', 2024, 'winter',  '2024-01-15', '2024-01-28'),
-('T002', 'National Sports Fest 2024',               2024, 'spring',  '2024-03-10', '2024-03-24'),
-('T003', 'Summer Athletics Invitational 2024',      2024, 'summer',  '2024-06-01', '2024-06-15'),
-('T004', 'Autumn Multi-Sport League 2024',          2024, 'fall',    '2024-09-15', '2024-09-30'),
-('T005', 'All-India University Games 2025',         2025, 'spring',  '2025-02-05', '2025-02-18'),
-('T006', 'Winter Badminton Open 2025',              2025, 'winter',  '2025-12-01', '2025-12-14');
-
+('T001', 'Inter-College Cricket Championship 2024', 2024, 'spring', '2024-03-01', '2024-03-15'),
+('T002', 'National Sports Fest 2024',               2024, 'summer', '2024-06-01', '2024-06-20'),
+('T003', 'Summer Athletics Invitational 2024',      2024, 'fall',   '2024-09-15', '2024-09-30'),
+('T004', 'Autumn Multi-Sport League 2024',          2024, 'winter', '2024-12-01', '2024-12-15'),
+('T005', 'All-India University Games 2025',         2025, 'spring', '2025-03-10', '2025-03-25'),
+('T006', 'Winter Badminton Open 2025',              2025, 'summer', '2025-06-05', '2025-06-25');
 
 -- ============================================================================
 -- 4. Sponsors  (sponsor_id, name, contact_no, company)
@@ -100,16 +99,15 @@ INSERT INTO Sponsors (sponsor_id, name, contact_no, company) VALUES
 -- ============================================================================
 -- 5. Sports  (sport_id, sport_name)
 -- ============================================================================
-INSERT INTO Sports (sport_id, sport_name) VALUES
-('S001', 'Cricket'),
-('S002', 'Football'),
-('S003', 'Basketball'),
-('S004', 'Tennis'),
-('S005', 'Badminton'),
-('S006', 'Athletics'),
-('S007', 'Table Tennis'),
-('S008', 'Volleyball');
-
+INSERT INTO Sports (sport_id, sport_name, max_team_size) VALUES
+('S001', 'Cricket',        15),
+('S002', 'Football',       18),
+('S003', 'Basketball',     12),
+('S004', 'Tennis',          1),  
+('S005', 'Badminton',       1),  
+('S006', 'Athletics',       1),  
+('S007', 'Table Tennis',    1),  
+('S008', 'Volleyball',     14);
 
 -- ============================================================================
 -- 6. Equipments  (equipment_id, equipment_name, number, condition)
@@ -178,6 +176,9 @@ INSERT INTO Referee (referee_id, referee_name, contact_no) VALUES
 ('R007', 'Rajiv Bose',        '9700220007'),
 ('R008', 'Swathi Reddy',      '9700220008');
 
+-- ============================================================================
+-- 10. SportTeamLimit seed data
+-- ============================================================================
 
 COMMIT;
 
